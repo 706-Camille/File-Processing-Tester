@@ -95,6 +95,7 @@ Node* minNode(Node* T)
 	return q;
 }
 
+
 int noNodes(Node* T)
 {
 	if (T == nullptr) return 0;
