@@ -4,6 +4,9 @@
 #include <algorithm> // std::max
 #include <cassert> // assert: 디버깅에 활용하세요.
 #include <stack>
+
+
+
 template <class _Tp> class Node;
 template <class _Tp> class AVL;
 
@@ -16,7 +19,7 @@ typedef enum {
 } ROTATION;
 
 typedef enum {
-	LEFT  = 0,
+	LEFT = 0,
 	RIGHT = 1,
 } DIRECTION;
 
@@ -40,12 +43,14 @@ public: // Member variables
 public: // Constructor
 	Node(const __key_type& key) : __key_(key), __left_(nullptr), __right_(nullptr), __bf_(0) {}
 
-	friend std::ostream& operator<<(std::ostream& os, const __node_pointer_type& np) {
-		if (np == nullptr) {
+	friend std::ostream& operator<<(std::ostream& os, const __node_pointer_type& np) 
+	{
+		if (np == nullptr) 
+		{
 			return os;
 		}
 		os << "<";
-		os << np->__left_;	
+		os << np->__left_;
 		os << " " << np->__key_ << " ";
 		os << np->__right_;
 		os << ">";
@@ -93,22 +98,22 @@ _NodePtr __tree_max(_NodePtr __x) {
 * PDF에 명시되어있는 출력 형식에 유의하세요.x`
 * ❗️잘못된 출력 형식은 0점 처리됩니다.❗️
 */
-	template <class _NodePtr>
-	void __inorder(_NodePtr __x) {
-		// write your own code here
-		if (__x == nullptr) {
-			return;
-		}
-
-		std::cout << "<";
-		__inorder(__x->__left_);
-		std::cout << " " << __x->__key_ << " ";
-		__inorder(__x->__right_);
-		std::cout << ">";
+template <class _NodePtr>
+void __inorder(_NodePtr __x) {
+	// write your own code here
+	if (__x == nullptr) {
+		return;
 	}
 
+	std::cout << "<";
+	__inorder(__x->__left_);
+	std::cout << " " << __x->__key_ << " ";
+	__inorder(__x->__right_);
+	std::cout << ">";
+}
+
 template <class _NodePtr>
-void __update_bf(_NodePtr __p) 
+void __update_bf(_NodePtr& __p)
 {
 	if (__p == nullptr) return;
 	__p->__bf_ = __height(__p->__left_) - __height(__p->__right_);
@@ -116,7 +121,7 @@ void __update_bf(_NodePtr __p)
 
 
 template <class _NodePtr>
-void __rotateLL(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
+void __rotateLL(_NodePtr& __root, _NodePtr& __x, _NodePtr& __f)
 {
 	_NodePtr subtree = __x->__left_;
 	__x->__left_ = subtree->__right_;
@@ -140,20 +145,20 @@ void __rotateLL(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
 
 
 template <class _NodePtr>
-void __rotateRR(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
+void __rotateRR(_NodePtr& __root, _NodePtr& __x, _NodePtr& __f)
 {
-	_NodePtr subtree = __x->__right_;  
-	__x->__right_ = subtree->__left_; 
-	subtree->__left_ = __x;          
+	_NodePtr subtree = __x->__right_;
+	__x->__right_ = subtree->__left_;
+	subtree->__left_ = __x;
 
 	if (__f == nullptr) {
-		__root = subtree;             
+		__root = subtree;
 	}
 	else if (__f->__left_ == __x) {
-		__f->__left_ = subtree;       
+		__f->__left_ = subtree;
 	}
 	else {
-		__f->__right_ = subtree;   
+		__f->__right_ = subtree;
 	}
 
 	__x->__bf_ = 0;
@@ -163,7 +168,7 @@ void __rotateRR(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
 
 
 template <class _NodePtr>
-void __rotateLR(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
+void __rotateLR(_NodePtr& __root, _NodePtr& __x, _NodePtr& __f)
 {
 	_NodePtr p = __x->__left_;  // L
 	_NodePtr q = p->__right_;   // R
@@ -175,13 +180,13 @@ void __rotateLR(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
 	q->__right_ = __x;          // 4
 
 	if (__f == nullptr) {
-		__root = q;  
+		__root = q;
 	}
 	else if (__f->__left_ == __x) {
-		__f->__left_ = q;  
+		__f->__left_ = q;
 	}
 	else {
-		__f->__right_ = q; 
+		__f->__right_ = q;
 	}
 
 	__update_bf(__x);
@@ -190,29 +195,29 @@ void __rotateLR(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
 }
 
 template <class _NodePtr>
-void __rotateRL(_NodePtr& __root, _NodePtr __x, _NodePtr __f)
+void __rotateRL(_NodePtr& __root, _NodePtr& __x, _NodePtr& __f)
 {
-	_NodePtr p = __x->__right_; 
-	_NodePtr q = p->__left_;  
+	_NodePtr p = __x->__right_;
+	_NodePtr q = p->__left_;
 
 	__x->__right_ = q->__left_;  // 1
 	p->__left_ = q->__right_;    // 2
-	 
+
 	q->__right_ = p;             // 3
 	q->__left_ = __x;            // 4
 
 
-	if (__f == nullptr) __root = q; 
-	else if (__f->__left_ == __x)__f->__left_ = q;  
-	else __f->__right_ = q;  
-	
+	if (__f == nullptr) __root = q;
+	else if (__f->__left_ == __x)__f->__left_ = q;
+	else __f->__right_ = q;
+
 	__update_bf(__x);
 	__update_bf(p);
 	q->__bf_ = 0;
 }
 
 template <class _NodePtr, class _Tp>
-void __check_balance(_NodePtr __root, const _Tp key, _NodePtr& x, _NodePtr& f, ROTATION& rotationType)
+void __check_balance(_NodePtr& __root, const _Tp key, _NodePtr& x, _NodePtr& f, ROTATION& rotationType)
 {
 	_NodePtr p = __root;
 	_NodePtr q = nullptr; // 부모
@@ -266,7 +271,7 @@ void __check_balance(_NodePtr __root, const _Tp key, _NodePtr& x, _NodePtr& f, R
 
 
 template <class _NodePtr>
-void __rotate_tree(_NodePtr& __root, _NodePtr& __x, _NodePtr& __f, ROTATION& __rotationType) 
+void __rotate_tree(_NodePtr& __root, _NodePtr& __x, _NodePtr& __f, ROTATION& __rotationType)
 {
 	if (__rotationType == ROTATION::NO) return;
 
@@ -305,7 +310,7 @@ std::pair<_NodePtr, bool> __insertBST(_NodePtr& __root, const _Tp& key) {
 	_NodePtr node = new Node<_Tp>(key);
 
 	if (__root == nullptr) __root = node;
-	else if (key < q->__key_) q->__left_ = node;	
+	else if (key < q->__key_) q->__left_ = node;
 	else q->__right_ = node;
 
 
@@ -321,7 +326,7 @@ std::pair<_NodePtr, bool> __insertAVL(_NodePtr& __root, const _Tp& key) {
 
 	std::pair<_NodePtr, bool> result = __insertBST(__root, key);
 	if (result.second == false)	return result;
-	 
+
 	__check_balance(__root, key, x, f, rotationType);
 	__rotate_tree(__root, x, f, rotationType);
 
@@ -331,7 +336,7 @@ std::pair<_NodePtr, bool> __insertAVL(_NodePtr& __root, const _Tp& key) {
 
 
 template <class _NodePtr, class _Tp>
-_NodePtr searchParent(_NodePtr __root, const _Tp key) {
+_NodePtr searchParent(_NodePtr &__root, const _Tp key) {
 	_NodePtr p = __root;
 	_NodePtr q = nullptr; // 부모 노드
 
@@ -343,7 +348,7 @@ _NodePtr searchParent(_NodePtr __root, const _Tp key) {
 			p = p->__right_;
 	}
 
-	return q; 
+	return q;
 }
 
 
@@ -351,7 +356,7 @@ _NodePtr searchParent(_NodePtr __root, const _Tp key) {
 // 따라서 check_balance 함수를 사용하지 않고, deleteAVL 함수 내에 sudo 코드 로직으로 작성하였습니다.
 
 template <class _NodePtr, class _Tp>
-bool __deleteAVL(_NodePtr& __root, const _Tp key) 
+bool __deleteAVL(_NodePtr& __root, const _Tp key)
 {
 	_NodePtr p = __root;  // 삭제할 노드
 	_NodePtr q = nullptr;  // 삭제할 노드의 부모
@@ -382,32 +387,32 @@ bool __deleteAVL(_NodePtr& __root, const _Tp key)
 		if (q == nullptr) __root = child;
 		else if (q->__left_ == p) q->__left_ = child;
 		else q->__right_ = child;
-		
+
 	}
 	// 차수 2 
-	else 
+	else
 	{
-			s.push(p);
-		
+		s.push(p);
+
 		_NodePtr tempNode = p;
 
 		// 오른쪽 서브트리 max
-		if ( __height(p->__left_) < __height(p->__right_) ||
-			 ( (__height(p->__left_) == __height(p->__right_)) && (__size(p->__left_) < __size(p->__right_)) )
+		if (__height(p->__left_) < __height(p->__right_) ||
+			((__height(p->__left_) == __height(p->__right_)) && (__size(p->__left_) < __size(p->__right_)))
 			)
 		{
-			p = p->__right_; 
-			while (p->__left_ != nullptr) 
-			{ 
+			p = p->__right_;
+			while (p->__left_ != nullptr)
+			{
 				s.push(p);
 				p = p->__left_;
 			}
 		}
 		// 왼쪽 서브트리 min
 		else {
-			p = p->__left_; 
-			while (p->__right_ != nullptr) 
-			{ 
+			p = p->__left_;
+			while (p->__right_ != nullptr)
+			{
 				s.push(p);
 				p = p->__right_;
 			}
@@ -415,33 +420,36 @@ bool __deleteAVL(_NodePtr& __root, const _Tp key)
 
 		// 키 대체
 		q = searchParent(__root, p->__key_);
+		
+		_Tp temp = tempNode->__key_;
 		tempNode->__key_ = p->__key_;
-
+		p->__key_ = temp;
+		
 		if (q->__left_ == p)
 			q->__left_ = (p->__right_ != nullptr) ? p->__right_ : p->__left_;
 		else
 			q->__right_ = (p->__left_ != nullptr) ? p->__left_ : p->__right_;
-
+		
 	}
-
+	;
 	delete p;
 	p = nullptr;
 	_NodePtr x = nullptr;
-	_NodePtr f = nullptr; 
+	_NodePtr f = nullptr;
 
 	while (!s.empty()) {
-		q = s.top(); 
-		s.pop();    
+		q = s.top();
+		s.pop();
 
 		__update_bf(q);
 
-		if (q->__bf_ > 1 || q->__bf_ < -1) 
+		if (q->__bf_ > 1 || q->__bf_ < -1)
 		{
 			if (x == nullptr)
 			{
 				x = q;
-				if(!s.empty())
-				f = s.top();
+				if (!s.empty())
+					f = s.top();
 			}
 		}
 	}
@@ -449,7 +457,7 @@ bool __deleteAVL(_NodePtr& __root, const _Tp key)
 	ROTATION rotationType;
 
 	// 불균형 노드가 없음
-	if (x == nullptr) 
+	if (x == nullptr)
 	{
 		return true;
 	}
@@ -543,6 +551,7 @@ int main(int argc, char** argv) {
 	char		command;
 	int			key;
 
+
 	while (std::cin >> command >> key) {
 		switch ((int)command) {
 		case (int)'i':
@@ -561,11 +570,15 @@ int main(int argc, char** argv) {
 			std::cerr << "Invalid command: " << command << std::endl;
 			return (1);
 		}
+
 		std::cout << tree << std::endl;
 	}
 
 	// 프로그램 종료 전, 메모리 누수가 발생하지 않도록 할당받은 메모리를 반드시 해제해야 합니다.
 	tree.clear();
+
+
+
 	return 0;
 
 }
