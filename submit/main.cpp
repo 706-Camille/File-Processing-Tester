@@ -226,7 +226,7 @@ std::pair<Node*, bool> insertBST(Node*& root, const int& key) {
     while (p != nullptr)
     {
         if (p->key == key) // 삽입할 노드가 이미 존재함
-            return std::pair<Node*, bool>(p, false);
+            return std::make_pair(p, false);
 
         q = p;
 
@@ -249,7 +249,7 @@ std::pair<Node*, bool> insertBST(Node*& root, const int& key) {
     else 
         q->right = node;
 
-    return std::pair<Node*, bool>{ node, true };
+    return std::make_pair(node, true);;
 }
 
 bool insertAVL(Node*& root, const int& key) {
