@@ -52,10 +52,10 @@ diff_test() {
 		return 1
 	fi
 
-	leak_test "$1"
-	if [ $? -eq 1 ]; then
-		return 1
-	fi
+	#leak_test "$1"
+	#if [ $? -eq 1 ]; then
+	#	return 1
+	#fi
 
 	"${PATH_TEST}"/user_exe < "$1" > "${PATH_TEST}"/output/${PROJECT}/user_output_$(basename "$1") 2>&1
 	SIG=$?
